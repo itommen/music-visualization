@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/itommen/music-visualization#readme",
   "devDependencies": {
+    "audio-render": "^2.0.1",
+    "audio-visualizer": "^1.6.0",
     "axios": "^0.16.2",
     "babel-cli": "^6.24.1",
     "babel-loader": "^7.0.0",
