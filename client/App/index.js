@@ -14,9 +14,9 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        this.setState(state => ({ ...state, audioStream: stream }));
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      .then((stream) => {        
+        this.setState(state => ({ ...state, stream }));
       })
       .catch(error => {
         // debugger;
@@ -25,24 +25,24 @@ export default class App extends Component {
 
   componentDidUpdate() {
     const audio = document.getElementById('Audio');
-    const { audioStream } = this.state;
+    const { stream } = this.state;
 
-    if (audioStream) {
-      audio.srcObject = audioStream;
+    if (stream) {
+      audio.srcObject = stream;
     }
   }
 
   render() {
-    const { audioStream } = this.state;
+    const { stream } = this.state;
 
-    if (!audioStream) {
+    if (!stream) {
       return <div>There is no audio stream around</div>
     }
 
     return <Flex id='root' column auto>
       <audio id="Audio" controls autoPlay></audio>
       <Flex auto>
-        <Visulizer stream={audioStream} />
+        <Visulizer stream={stream} />
       </Flex>
     </Flex>;
   }

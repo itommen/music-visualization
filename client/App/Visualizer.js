@@ -1,6 +1,19 @@
 import React, { Component } from 'react';
 
+import { Flex } from 'reflexbox';
+
 const DEFAULT_FFT_SIZE = 256;
+
+const style = {
+    position: 'absolute',
+    top: '10px',
+    left: 0,
+}
+
+const visualizeStyle = {
+    opacity: 0.4,
+    zIndex: 1
+}
 
 export default class Visualizer extends Component {
     constructor() {
@@ -9,39 +22,55 @@ export default class Visualizer extends Component {
         this.state = {};
 
         this.renderFrame = this.renderFrame.bind(this);
+        this.setDimations = this.setDimations.bind(this);
     }
 
     componentDidMount() {
         const { stream } = this.props;
 
         const context = new AudioContext();
-        const analyser = context.createAnalyser();    
+        const analyser = context.createAnalyser();
+
+        this.setDimations();
 
         const canvas = document.getElementById("music-container");
+        const videoContainer = document.getElementById('video-container');
+
         const { width, height } = canvas.parentNode.getBoundingClientRect();
-        canvas.width = width;
-        canvas.height = height;
 
         context.createMediaStreamSource(stream).connect(analyser);
         analyser.connect(context.destination);
 
         analyser.fftSize = DEFAULT_FFT_SIZE;
 
-        const bufferLength = analyser.frequencyBinCount;
-        const barWidth = (width / bufferLength) * 2.5;
+        this.setState(state => ({ ...state, width, height, analyser }))
 
-        this.setState(state => ({ ...state, width, height, barWidth, analyser }))
+        videoContainer.src = window.URL.createObjectURL(stream);
 
         this.renderFrame();
     }
 
+    setDimations() {
+        const canvas = document.getElementById("music-container");
+        const videoContainer = document.getElementById('video-container');
+
+        const { width, height } = canvas.parentNode.getBoundingClientRect();
+        canvas.width = width;
+        canvas.height = height;
+
+        videoContainer.height = height;
+        videoContainer.width = width;
+    }
+
     renderFrame() {
-        const { width, height, barWidth, analyser } = this.state;
+        const { width, height, analyser } = this.state;
 
         requestAnimationFrame(this.renderFrame);
 
         const canvas = document.getElementById("music-container");
         const bufferLength = analyser.frequencyBinCount;
+        const barWidth = (width / bufferLength) * 2.5;
+
         const ctx = canvas.getContext("2d");
         let x = 0;
 
@@ -49,8 +78,8 @@ export default class Visualizer extends Component {
 
         analyser.getByteFrequencyData(dataArray);
 
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, width, height);
+        //ctx.fillStyle = "transparent";
+        ctx.clearRect(0, 0, width, height);
 
         for (let i = 0; i < bufferLength; i++) {
             const barHeight = dataArray[i];
@@ -67,6 +96,9 @@ export default class Visualizer extends Component {
     }
 
     render() {
-        return <canvas id="music-container"></canvas>;
+        return <Flex column auto>
+            <canvas style={{ ...style, ...visualizeStyle }} id="music-container"></canvas>
+            <video style={style} id='video-container' autoPlay></video>
+        </Flex>;
     }
 }
