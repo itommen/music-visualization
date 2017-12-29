@@ -1,65 +1,49 @@
 import React, { Component } from 'react';
 
-import { start } from './visualize';
+import { Flex } from 'reflexbox';
+
+import Visulizer from './Visualizer';
+
+import './style.less';
 
 export default class App extends Component {
   constructor() {
     super();
 
     this.state = {};
-
-    this.fileChange = this.fileChange.bind(this);
   }
 
-  fileChange(e) {
-    const { target: { files } } = e;
-    const reader = new FileReader();
-    reader.onload = ({ target: { result } }) => {
-      this.setState(state => ({ ...state, file: result }));
-    };
-    reader.readAsDataURL(files[0]);
+  componentWillMount() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        this.setState(state => ({ ...state, audioStream: stream }));
+      })
+      .catch(error => {
+        // debugger;
+      });
   }
 
   componentDidUpdate() {
-    const { file } = this.state;
-    debugger;
+    const audio = document.getElementById('Audio');
+    const { audioStream } = this.state;
 
-    if (file) {      
-      //start();
+    if (audioStream) {
+      audio.srcObject = audioStream;
     }
   }
 
   render() {
-    const { file } = this.state;
-    return <div>
-      {
-        file
-          ? <div>
-            <div id='visualize' />
-            <audio id='audio' src={file} autoPlay={true} />
-          </div>
-          : null
-      }
-      <input
-        type='file'
-        onChange={this.fileChange} />
-    </div>;
+    const { audioStream } = this.state;
+
+    if (!audioStream) {
+      return <div>There is no audio stream around</div>
+    }
+
+    return <Flex id='root' column auto>
+      <audio id="Audio" controls autoPlay></audio>
+      <Flex auto>
+        <Visulizer stream={audioStream} />
+      </Flex>
+    </Flex>;
   }
 }
-
-// var $audio = $('#myAudio');
-// $('input').on('change', function(e) {
-//   var target = e.currentTarget;
-//   var file = target.files[0];
-//   var reader = new FileReader();
-
-//   console.log($audio[0]);
-//    if (target.files && file) {
-//         var reader = new FileReader();
-//         reader.onload = function (e) {
-//             $audio.attr('src', e.target.result);
-//             $audio.play();
-//         }
-//         reader.readAsDataURL(file);
-//     }
-// });
