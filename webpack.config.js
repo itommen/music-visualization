@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist/client'),
     filename: '[name].[hash].js',
-    publicPath: 'http://localhost:8081/'
+    publicPath: 'https://localhost:8081/'
   },
   module: {
     rules: [
@@ -54,6 +54,7 @@ module.exports = {
     extensions: ['.js', 'jsx', '.less', '.css', '.html']
   },
   devServer: {    
+    https: true,
     historyApiFallback: true,
     hotOnly: true
   },
