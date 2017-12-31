@@ -26,8 +26,9 @@ export default class Visualizer extends Component {
     }
 
     componentDidMount() {
-        const { stream } = this.props;
+        const { audioStream, videoStream } = this.props;
 
+        debugger;
         const context = new AudioContext();
         const analyser = context.createAnalyser();
 
@@ -38,14 +39,14 @@ export default class Visualizer extends Component {
 
         const { width, height } = canvas.parentNode.getBoundingClientRect();
 
-        context.createMediaStreamSource(stream).connect(analyser);
+        context.createMediaStreamSource(audioStream).connect(analyser);
         analyser.connect(context.destination);
 
         analyser.fftSize = DEFAULT_FFT_SIZE;
 
         this.setState(state => ({ ...state, width, height, analyser }))
 
-        videoContainer.src = window.URL.createObjectURL(stream);
+        videoContainer.src = window.URL.createObjectURL(videoStream);
 
         this.renderFrame();
     }
@@ -96,7 +97,9 @@ export default class Visualizer extends Component {
     }
 
     render() {
-        return <Flex column auto>
+        return <Flex column auto style={{
+            position: 'relative'
+        }}>
             <canvas style={{ ...style, ...visualizeStyle }} id="music-container"></canvas>
             <video style={style} id='video-container' autoPlay></video>
         </Flex>;

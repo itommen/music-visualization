@@ -17,6 +17,9 @@ export default class App extends Component {
     };
 
     this.loadStream = this.loadStream.bind(this);
+    this.loadAudioStream = this.loadAudioStream.bind(this);
+    this.loadVideoStream = this.loadVideoStream.bind(this);
+    this.sourceChanged = this.sourceChanged.bind(this);
   }
 
   componentWillMount() {
@@ -30,51 +33,70 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.loadStream();
+    this.loadAudioStream();
+    this.loadVideoStream();
   }
 
-  loadStream() {
-    const { videoSourceId, audioSourceId } = this.state;
+  componentDidUpdate(prevProps, prevState) {
+    const { videoSourceId, audioSourceId, audioStream } = this.state;
+    const audio = document.getElementById('Audio');
+
+    if (videoSourceId != prevState.videoSourceId) {
+      this.loadVideoStream();
+    }
+
+    if (audioSourceId != prevState.audioSourceId) {
+      audio.srcObject = audioStream;
+    }
+  }
+
+  loadAudioStream() {
+    this.loadStream('audio');
+  }
+
+  loadVideoStream() {
+    this.loadStream('video');
+  }
+
+  loadStream(streamTypeName) {
+    const sourceId = this.state[`${streamTypeName}SourceId`];
 
     navigator.mediaDevices.getUserMedia({
       audio: {
-        optional: [{ sourceId: audioSourceId }]
-      },
-      video: {
-        optional: [{ sourceId: videoSourceId }]
+        optional: [{ sourceId }]
       }
     })
       .then((stream) => {
-        this.setState(state => ({ ...state, stream }));
+        this.setState(state => ({ ...state, [`${streamTypeName}Stream`]: stream }));
       })
       .catch(error => {
-        debugger;
+        //debugger;
       })
   }
 
-  componentDidUpdate() {
-    const audio = document.getElementById('Audio');
-    const { stream } = this.state;
-
-    if (stream) {
-      audio.srcObject = stream;
+  sourceChanged(sourceName) {
+    return ({ target: { value } }) => {
+      this.setState(state => ({
+        ...state,
+        [sourceName]: value
+      }));
     }
   }
 
   render() {
-    const { stream, audioSources, videoSources } = this.state;
+    const { audioStream, videoStream, audioSources, videoSources, videoSourceId, audioSourceId } = this.state;
 
-    if (!stream) {
+    if (!audioStream || !videoStream) {
       return <div>There is no audio stream around</div>
     }
 
     return <Flex id='root' column auto>
       <Flex>
         <audio id="Audio" controls autoPlay></audio>
-        <SourceSelect sources={videoSources} />
+        <SourceSelect sources={videoSources} selectedSource={videoSourceId} sourceChanged={this.sourceChanged('videoSourceId')} />
       </Flex>
       <Flex auto>
-        <Visulizer stream={stream} />
+        <Visulizer audioStream={audioStream} videoStream={videoStream} videoSource={videoSourceId} />
       </Flex>
     </Flex>;
   }
