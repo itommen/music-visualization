@@ -50,6 +50,18 @@ export default class Visualizer extends Component {
     this.renderFrame();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    debugger;
+    const { videoStream } = this.props;
+
+    if (videoStream.id !== prevProps.videoStream.id) {
+
+      const videoContainer = document.getElementById('video-container');
+
+      videoContainer.src = window.URL.createObjectURL(videoStream);
+    }
+  }
+
   setDimations() {
     const canvas = document.getElementById('music-container');
     const videoContainer = document.getElementById('video-container');

@@ -53,7 +53,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', 'jsx', '.less', '.css', '.html']
   },
-  devServer: {    
+  devServer: {
     https: true,
     historyApiFallback: true,
     hotOnly: true

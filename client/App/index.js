@@ -7,6 +7,10 @@ import SourceSelect from './SourceSelect';
 
 import './style.less';
 
+const filterDevices = (devices, type) => devices
+  .filter(({ kind }) => kind === type)
+  .map(({ deviceId, label }) => ({ deviceId, label }));
+
 export default class App extends Component {
   constructor() {
     super();
@@ -25,13 +29,9 @@ export default class App extends Component {
   componentWillMount() {
     navigator.mediaDevices.enumerateDevices()
       .then(devices => {
-        const audioSources = devices
-          .filter(x => x.kind === 'audioinput')
-          .map(({ deviceId, label }) => ({ deviceId, label }));
-        const videoSources = devices
-          .filter(x => x.kind === 'videoinput')
-          .map(({ deviceId, label }) => ({ deviceId, label }));
-
+        const audioSources = filterDevices(devices, 'audioinput');
+        const videoSources = filterDevices(devices, 'videoinput');
+        
         this.setState(state => ({ ...state, audioSources, videoSources }));
       });
   }
@@ -45,6 +45,7 @@ export default class App extends Component {
     const { videoSourceId, audioSourceId, audioStream } = this.state;
     const audio = document.getElementById('Audio');
 
+    debugger;
     if (videoSourceId !== prevState.videoSourceId) {
       this.loadVideoStream();
     }
@@ -66,11 +67,12 @@ export default class App extends Component {
     const sourceId = this.state[`${streamTypeName}SourceId`];
 
     navigator.mediaDevices.getUserMedia({
-      audio: {
+      [streamTypeName]: {
         optional: [{ sourceId }]
       }
     })
       .then((stream) => {
+        debugger
         this.setState(state => ({ ...state, [`${streamTypeName}Stream`]: stream }));
       })
       .catch(() => {
