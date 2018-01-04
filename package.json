@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
     "server-dev": "nodemon server/index.js --exec babel-node",
-    "client-dev": "webpack-dev-server",
+    "client-dev": "webpack-dev-server --host 10.0.0.1 --port 8081",
     "build-client": "webpack",
     "build-server": "babel server -d dist/server",
     "lint-client": "eslint client --fix",

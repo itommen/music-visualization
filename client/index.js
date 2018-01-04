@@ -5,7 +5,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import App from './App';
 
-// until material - ui bug would be fixed .. 
+// until material - ui bug would be fixed ..
 injectTapEventPlugin();
 
 render(
