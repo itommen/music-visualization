@@ -43,22 +43,23 @@ export default class Visualizer extends Component {
 
     analyser.fftSize = DEFAULT_FFT_SIZE;
 
-    this.setState(state => ({ ...state, width, height, analyser }));
+    this.setState(state => ({ ...state, width, height, analyser, context }));
 
-    videoContainer.src = window.URL.createObjectURL(videoStream);
+    videoContainer.srcObject = videoStream;
 
     this.renderFrame();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    debugger;
-    const { videoStream } = this.props;
+    const { videoStream, audioStream } = this.props;
+    const { analyser, context } = this.state;
 
     if (videoStream.id !== prevProps.videoStream.id) {
 
       const videoContainer = document.getElementById('video-container');
 
-      videoContainer.src = window.URL.createObjectURL(videoStream);
+      videoContainer.srcObject = videoStream;
+      context.createMediaStreamSource(audioStream).connect(analyser);
     }
   }
 
@@ -108,6 +109,7 @@ export default class Visualizer extends Component {
   }
 
   render() {
+    const { video } = this.state;
     return <Flex column auto style={{
       position: 'relative'
     }}>
