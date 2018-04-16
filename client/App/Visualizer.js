@@ -11,7 +11,6 @@ const style = {
 };
 
 const visualizeStyle = {
-  opacity: 0.4,
   zIndex: 1
 };
 
@@ -110,10 +109,12 @@ export default class Visualizer extends Component {
 
   render() {
     const { video } = this.state;
+    const { setting: { opacity } } = this.props;
+
     return <Flex column auto style={{
       position: 'relative'
     }}>
-      <canvas style={{ ...style, ...visualizeStyle }} id='music-container' />
+      <canvas style={{ ...style, opacity, ...visualizeStyle }} id='music-container' />
       <video style={style} id='video-container' autoPlay />
     </Flex>;
   }

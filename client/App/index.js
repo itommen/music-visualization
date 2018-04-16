@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 
 import { Flex } from 'reflexbox';
 
+import SettingsIcon from 'material-ui-icons/Settings';
+
 import Visulizer from './Visualizer';
 import SourceSelect from './SourceSelect';
+import Setting from './Setting';
 
 import './style.less';
 
@@ -17,9 +20,14 @@ export default class App extends Component {
 
     this.state = {
       audioSourceId: 'default',
-      videoSourceId: 'default'
+      videoSourceId: 'default',
+      isSettingDialogOpen: false,
+      setting: {
+        opacity: 0.4
+      }
     };
 
+    this.updateSetting = this.updateSetting.bind(this);
     this.loadStream = this.loadStream.bind(this);
     this.sourceChanged = this.videoSourceChanged.bind(this);
     this.updateSourceSelection = this.updateSourceSelection.bind(this);
@@ -104,14 +112,35 @@ export default class App extends Component {
     }), this.loadStream);
   }
 
+  updateSetting(name, value) {
+    this.setState(state => ({
+      ...state,
+      setting: {
+        ...state.setting,
+        [name]: value
+      }
+    }));
+  }
+
   render() {
-    const { stream, videoSources, videoSourceId } = this.state;
+    const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen } = this.state;
 
     if (!stream) {
       return <div>There is no audio stream around</div>;
     }
 
     return <Flex id='root' column auto>
+      <SettingsIcon style={{
+        position: 'absolute',
+        left: '10px',
+        top: '10px'
+      }}
+        onClick={() => this.setState(state => ({ ...state, isSettingDialogOpen: true }))} />
+      <Setting
+        isOpen={isSettingDialogOpen}
+        onClose={() => this.setState(state => ({ ...state, isSettingDialogOpen: false }))}
+        onUpdate={this.updateSetting}
+        setting={setting} />
       <Flex>
         <audio id='Audio' controls autoPlay />
         <SourceSelect sources={videoSources}
@@ -121,7 +150,8 @@ export default class App extends Component {
       <Flex auto>
         <Visulizer audioStream={stream}
           videoStream={stream}
-          videoSource={videoSourceId} />
+          videoSource={videoSourceId}
+          setting={setting} />
       </Flex>
     </Flex>;
   }
