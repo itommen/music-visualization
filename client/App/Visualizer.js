@@ -20,6 +20,7 @@ export default class Visualizer extends Component {
 
     this.state = {};
 
+    this.extractAudioData = this.extractAudioData.bind(this);
     this.renderFrame = this.renderFrame.bind(this);
     this.setDimations = this.setDimations.bind(this);
   }
@@ -42,11 +43,9 @@ export default class Visualizer extends Component {
 
     analyser.fftSize = DEFAULT_FFT_SIZE;
 
-    this.setState(state => ({ ...state, width, height, analyser, context }));
+    this.setState(state => ({ ...state, width, height, analyser, context }), this.renderFrame);
 
     videoContainer.srcObject = videoStream;
-
-    this.renderFrame();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -74,31 +73,43 @@ export default class Visualizer extends Component {
     videoContainer.width = width;
   }
 
+  extractAudioData() {
+    const { analyser } = this.state;
+
+    const bufferLength = analyser.frequencyBinCount;
+
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+
+    const data2Array = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(data2Array);
+
+    return [...data2Array, ...dataArray];
+  }
+
   renderFrame() {
     const { width, height, analyser } = this.state;
 
     requestAnimationFrame(this.renderFrame);
-
     const canvas = document.getElementById('music-container');
-    const bufferLength = analyser.frequencyBinCount;
-    const barWidth = width / bufferLength * 2.5;
 
     const ctx = canvas.getContext('2d');
     let x = 0;
 
-    const dataArray = new Uint8Array(bufferLength);
+    const data = this.extractAudioData();
 
-    analyser.getByteFrequencyData(dataArray);
+    // debugger;
 
-    // ctx.fillStyle = "transparent";
+    const barWidth = width / data.length;
+
     ctx.clearRect(0, 0, width, height);
 
-    for (let i = 0; i < bufferLength; i = i + 1) {
-      const barHeight = dataArray[i];
+    for (let i = 0; i < data.length; i = i + 1) {
+      const barHeight = data[i];
 
       const red = 50;
-      const green = 250 * (i / bufferLength) + barHeight;
-      const blue = barHeight + 25 * (i / bufferLength);
+      const green = 250 * (i / data.length) + barHeight;
+      const blue = barHeight + 25 * (i / data.length);
 
       ctx.fillStyle = `rgb(${red},${green},${blue})`;
       ctx.fillRect(x, height - barHeight, barWidth, barHeight);
