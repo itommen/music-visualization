@@ -19,6 +19,9 @@ const visualizeStyle = {
   zIndex: 1
 };
 
+let particles = new Array();
+let particle;
+
 export default class Visualizer extends Component {
   constructor() {
     super();
@@ -34,15 +37,57 @@ export default class Visualizer extends Component {
   componentDidMount() {
     const { audioStream, videoStream } = this.props;
 
+    const width = this.mount.clientWidth;
+    const height = this.mount.clientHeight;
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 2000);
+    camera.position.set(0, -50, 750);
+
+    const renderer = new THREE.CanvasRenderer();
+    renderer.setSize(width, height);
+    renderer.setClearColor('#000000');
+
+    let pi2 = Math.PI * 2;
+
+    for (let i = 0; i <= 1024; i++)
+    {
+      let material = new THREE.SpriteMaterial({
+          color: 0xffffff, program: function(context){
+            context.beginPath();
+            context.arc(0, -1, 1, 0, pi2, true);
+            context.fill();
+          }
+      });
+
+      particle = particles[i++] = new THREE.Particle(material);
+
+      if (i <= 1024)
+      {
+        particle.position.x = (i - 512) * 1.1;
+          particle.position.y = 0;
+          particle.position.z = 0;
+      }
+
+      scene.add(particle);
+    }
+
+      this.renderer = renderer;
+      this.scene = scene;
+      this.camera = camera;
+
+      this.mount.appendChild(this.renderer.domElement);
+
     const context = new AudioContext();
     const gain = context.createGain();
     gain.gain.setTargetAtTime(0, context.currentTime, 0);
 
     const analyser = context.createAnalyser();
 
-    this.setDimations();
+    //this.setDimations();
 
-    const canvas = document.getElementById('music-container');
+    //const canvas = document.getElementById('music-container');
     const videoContainer = document.getElementById('video-container');
 
     const { width, height } = videoStream.getVideoTracks()[0].getSettings();
@@ -119,30 +164,37 @@ export default class Visualizer extends Component {
       return;
     }
 
-    const canvas = document.getElementById('music-container');
+    //const canvas = document.getElementById('music-container');
 
-    const ctx = canvas.getContext('2d');
+    //const ctx = canvas.getContext('2d');
     let x = 0;
 
     const data = this.extractAudioData();
 
     const barWidth = width / data.length;
 
-    ctx.clearRect(0, 0, width, height);
+    //ctx.clearRect(0, 0, width, height);
 
-    for (let i = 0; i < data.length; i = i + 1) {
-      const barHeight = data[i];
-      const colorPallete = colors[floor(i / bufferLength)];
+      for (let i = 0; i < 1024; i = i + 1)
+      {
+        particle = particles[i++];
+        particle.position.y = dataArray[i] + 80;
+        particle.material.color.setRGB(1, 1 - (dataArray[i]/255), 1);
+      }
 
-      const red = colorPallete[0];
-      const green = colorPallete[1];
-      const blue = colorPallete[2];
-
-      ctx.fillStyle = `rgb(${red},${green},${blue})`;      
-      ctx.fillRect(x, height - barHeight, barWidth, barHeight);
-
-      x = x + (barWidth);
-    }
+      this.renderer.render(this.scene, this.camera);
+    // for (let i = 0; i < bufferLength; i = i + 1) {
+    //   const barHeight = dataArray[i];
+    //
+    //   const red = 50;
+    //   const green = 250 * (i / bufferLength) + barHeight;
+    //   const blue = barHeight + 25 * (i / bufferLength);
+    //
+    //   ctx.fillStyle = `rgb(${red},${green},${blue})`;
+    //   ctx.fillRect(x, height - barHeight, barWidth, barHeight);
+    //
+    //   x = x + (barWidth + 1);
+    // }
   }
 
   render() {
@@ -152,7 +204,7 @@ export default class Visualizer extends Component {
     return <Flex column auto style={{
       position: 'relative'
     }}>
-      <canvas style={{ ...style, opacity, ...visualizeStyle }} id='music-container' />
+      <div style={{ ...style, opacity, ...visualizeStyle }} ref={(mount) => {this.mount = mount}} id='music-container' />
       <video style={style} id='video-container' autoPlay muted={true} />
     </Flex>;
   }

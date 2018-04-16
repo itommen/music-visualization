@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
     "server-dev": "nodemon server/index.js --exec babel-node",
-    "client-dev": "webpack-dev-server --host 10.10.192.76 --port 8081",
+    "client-dev": "webpack-dev-server --host localhost --port 8081",
     "build-client": "webpack",
     "build-server": "babel server -d dist/server",
     "lint-client": "eslint client --fix",
@@ -65,6 +65,7 @@
     "redux-simple-promise": "^2.0.2",
     "reflexbox": "^3.0.0-0",
     "style-loader": "^0.18.2",
+    "three": "^0.91.0",
     "typeface-roboto": "0.0.45",
     "url-loader": "^0.5.9",
     "webpack": "^3.3.0",
