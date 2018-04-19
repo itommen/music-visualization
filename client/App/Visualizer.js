@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import getPixels from 'get-image-pixels';
+import getColors from 'get-rgba-palette';
+
 import { Flex } from 'reflexbox';
 
 const DEFAULT_FFT_SIZE = 256;
@@ -22,6 +25,7 @@ export default class Visualizer extends Component {
 
     this.renderFrame = this.renderFrame.bind(this);
     this.setDimations = this.setDimations.bind(this);
+    this.capturePicture = this.capturePicture.bind(this);
   }
 
   componentDidMount() {
@@ -46,6 +50,9 @@ export default class Visualizer extends Component {
 
     videoContainer.srcObject = videoStream;
 
+    setInterval(this.capturePicture, 1 * 1000);
+
+    this.capturePicture();
     this.renderFrame();
   }
 
@@ -59,7 +66,18 @@ export default class Visualizer extends Component {
 
       videoContainer.srcObject = videoStream;
       context.createMediaStreamSource(audioStream).connect(analyser);
+
+      const track = videoStream.getVideoTracks()[0];
     }
+  }
+
+  capturePicture() {
+    const { videoStream } = this.props;
+
+    this.setState(state => ({
+      ...state,
+      colors: getColors(getPixels(document.getElementById('video-container')), 1)
+    }));
   }
 
   setDimations() {
@@ -75,9 +93,13 @@ export default class Visualizer extends Component {
   }
 
   renderFrame() {
-    const { width, height, analyser } = this.state;
+    const { width, height, analyser, colors } = this.state;
 
     requestAnimationFrame(this.renderFrame);
+
+    if (!colors || !colors.length) {
+      return;
+    }
 
     const canvas = document.getElementById('music-container');
     const bufferLength = analyser.frequencyBinCount;
@@ -96,9 +118,9 @@ export default class Visualizer extends Component {
     for (let i = 0; i < bufferLength; i = i + 1) {
       const barHeight = dataArray[i];
 
-      const red = 50;
-      const green = 250 * (i / bufferLength) + barHeight;
-      const blue = barHeight + 25 * (i / bufferLength);
+      const red = colors[0][0];
+      const green = colors[0][1];
+      const blue = colors[0][2];
 
       ctx.fillStyle = `rgb(${red},${green},${blue})`;
       ctx.fillRect(x, height - barHeight, barWidth, barHeight);
