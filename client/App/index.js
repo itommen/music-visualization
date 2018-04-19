@@ -7,6 +7,7 @@ import SettingsIcon from 'material-ui-icons/Settings';
 import Visulizer from './Visualizer';
 import SourceSelect from './SourceSelect';
 import Setting from './Setting';
+import MissingStream from './MissingStream';
 
 import './style.less';
 
@@ -125,8 +126,8 @@ export default class App extends Component {
   render() {
     const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen } = this.state;
 
-    if (!stream) {
-      return <div>There is no audio stream around</div>;
+    if (!stream || stream.getTracks().length < 2) {
+      return <MissingStream stream={stream} />;
     }
 
     return <Flex id='root' column auto>
