@@ -5,6 +5,8 @@ import getColors from 'get-rgba-palette';
 
 import { Flex } from 'reflexbox';
 
+import { floor } from 'lodash';
+
 const DEFAULT_FFT_SIZE = 256;
 
 const style = {
@@ -23,6 +25,7 @@ export default class Visualizer extends Component {
 
     this.state = {};
 
+    this.extractAudioData = this.extractAudioData.bind(this);
     this.renderFrame = this.renderFrame.bind(this);
     this.setDimations = this.setDimations.bind(this);
     this.capturePicture = this.capturePicture.bind(this);
@@ -32,6 +35,9 @@ export default class Visualizer extends Component {
     const { audioStream, videoStream } = this.props;
 
     const context = new AudioContext();
+    const gain = context.createGain();
+    gain.gain.setTargetAtTime(0, context.currentTime, 0);
+
     const analyser = context.createAnalyser();
 
     this.setDimations();
@@ -39,21 +45,19 @@ export default class Visualizer extends Component {
     const canvas = document.getElementById('music-container');
     const videoContainer = document.getElementById('video-container');
 
-    const { width, height } = canvas.parentNode.getBoundingClientRect();
+    const { width, height } = videoStream.getVideoTracks()[0].getSettings();
 
-    context.createMediaStreamSource(audioStream).connect(analyser);
-    analyser.connect(context.destination);
+    const source = context.createMediaStreamSource(audioStream);
+    source.connect(analyser);    
 
     analyser.fftSize = DEFAULT_FFT_SIZE;
 
-    this.setState(state => ({ ...state, width, height, analyser, context }));
+    this.setState(state => ({ ...state, width, height, analyser, context }), this.renderFrame);
 
     videoContainer.srcObject = videoStream;
-
     setInterval(this.capturePicture, 1 * 1000);
 
     this.capturePicture();
-    this.renderFrame();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -65,7 +69,6 @@ export default class Visualizer extends Component {
       const videoContainer = document.getElementById('video-container');
 
       videoContainer.srcObject = videoStream;
-      context.createMediaStreamSource(audioStream).connect(analyser);
 
       const track = videoStream.getVideoTracks()[0];
     }
@@ -76,15 +79,16 @@ export default class Visualizer extends Component {
 
     this.setState(state => ({
       ...state,
-      colors: getColors(getPixels(document.getElementById('video-container')), 1)
+      colors: getColors(getPixels(document.getElementById('video-container')), 2)
     }));
   }
 
   setDimations() {
+    const { videoStream } = this.props;
     const canvas = document.getElementById('music-container');
     const videoContainer = document.getElementById('video-container');
 
-    const { width, height } = canvas.parentNode.getBoundingClientRect();
+    const { width, height } = videoStream.getVideoTracks()[0].getSettings();
     canvas.width = width;
     canvas.height = height;
 
@@ -92,40 +96,52 @@ export default class Visualizer extends Component {
     videoContainer.width = width;
   }
 
+  extractAudioData() {
+    const { analyser } = this.state;
+
+    const bufferLength = analyser.frequencyBinCount;
+
+    const frequencyDataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(frequencyDataArray);    
+
+    const waveDataArray = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(waveDataArray);
+
+    return [...waveDataArray, ...frequencyDataArray];
+  }
+
   renderFrame() {
     const { width, height, analyser, colors } = this.state;
+    const bufferLength = analyser.frequencyBinCount;
 
     requestAnimationFrame(this.renderFrame);
-
     if (!colors || !colors.length) {
       return;
     }
 
     const canvas = document.getElementById('music-container');
-    const bufferLength = analyser.frequencyBinCount;
-    const barWidth = width / bufferLength * 2.5;
 
     const ctx = canvas.getContext('2d');
     let x = 0;
 
-    const dataArray = new Uint8Array(bufferLength);
+    const data = this.extractAudioData();
 
-    analyser.getByteFrequencyData(dataArray);
+    const barWidth = width / data.length;
 
-    // ctx.fillStyle = "transparent";
     ctx.clearRect(0, 0, width, height);
 
-    for (let i = 0; i < bufferLength; i = i + 1) {
-      const barHeight = dataArray[i];
+    for (let i = 0; i < data.length; i = i + 1) {
+      const barHeight = data[i];
+      const colorPallete = colors[floor(i / bufferLength)];
 
-      const red = colors[0][0];
-      const green = colors[0][1];
-      const blue = colors[0][2];
+      const red = colorPallete[0];
+      const green = colorPallete[1];
+      const blue = colorPallete[2];
 
-      ctx.fillStyle = `rgb(${red},${green},${blue})`;
+      ctx.fillStyle = `rgb(${red},${green},${blue})`;      
       ctx.fillRect(x, height - barHeight, barWidth, barHeight);
 
-      x = x + (barWidth + 1);
+      x = x + (barWidth);
     }
   }
 
@@ -137,7 +153,7 @@ export default class Visualizer extends Component {
       position: 'relative'
     }}>
       <canvas style={{ ...style, opacity, ...visualizeStyle }} id='music-container' />
-      <video style={style} id='video-container' autoPlay />
+      <video style={style} id='video-container' autoPlay muted={true} />
     </Flex>;
   }
 }

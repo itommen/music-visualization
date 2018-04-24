@@ -57,14 +57,9 @@ export default class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { videoSourceId, audioSourceId, audioStream } = this.state;
-    const audio = document.getElementById('Audio');
 
     if (videoSourceId !== prevState.videoSourceId) {
       this.loadStream();
-    }
-
-    if (audioSourceId !== prevState.audioSourceId) {
-      audio.srcObject = audioStream;
     }
   }
 
@@ -143,7 +138,6 @@ export default class App extends Component {
         onUpdate={this.updateSetting}
         setting={setting} />
       <Flex>
-        <audio id='Audio' controls autoPlay />
         <SourceSelect sources={videoSources}
           selectedSource={videoSourceId}
           sourceChanged={x => this.videoSourceChanged(x)} />
