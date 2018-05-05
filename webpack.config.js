@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist/client'),
     filename: '[name].[hash].js',
-    publicPath: 'https://10.10.192.76:8081/'
+    publicPath: 'https://10.0.0.7:8081/'
   },
   module: {
     rules: [
@@ -48,7 +48,10 @@ module.exports = {
       template: './client/index.html'
     }),
     new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    // new webpack.ProvidePlugin({
+    //   'THREE': 'three/build/three'
+    // }),
   ],
   resolve: {
     extensions: ['.js', 'jsx', '.less', '.css', '.html']

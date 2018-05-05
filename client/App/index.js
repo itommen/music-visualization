@@ -22,7 +22,7 @@ export default class App extends Component {
     this.state = {
       audioSourceId: 'default',
       videoSourceId: 'default',
-      isSettingDialogOpen: false,
+      isSettingDialogOpen: true,
       setting: {
         opacity: 0.4
       }
