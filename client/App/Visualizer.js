@@ -119,7 +119,7 @@ export default class Visualizer extends Component {
 
     this.setState(state => ({
       ...state,
-      colors: getColors(getPixels(document.getElementById('video-container')), 2)
+      colors: getColors(getPixels(document.getElementById('video-container')), 5)
     }));
   }
 
@@ -180,6 +180,74 @@ export default class Visualizer extends Component {
     return [...waveDataArray, ...frequencyDataArray];
   }
 
+    componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    rgbToHex(r, g, b) {
+        return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+    }
+
+    applySaturationToHexColor(hex, saturationPercent) {
+        if (!/^#([0-9a-f]{6})$/i.test(hex)) {
+            throw('Unexpected color format');
+        }
+
+        if (saturationPercent < 0 || saturationPercent > 100) {
+            throw('Unexpected color format');
+        }
+
+        var saturationFloat   = saturationPercent / 100,
+            rgbIntensityFloat = [
+                parseInt(hex.substr(1,2), 16) / 255,
+                parseInt(hex.substr(3,2), 16) / 255,
+                parseInt(hex.substr(5,2), 16) / 255
+            ];
+
+        var rgbIntensityFloatSorted = rgbIntensityFloat.slice(0).sort(function(a, b){ return a - b; }),
+            maxIntensityFloat       = rgbIntensityFloatSorted[2],
+            mediumIntensityFloat    = rgbIntensityFloatSorted[1],
+            minIntensityFloat       = rgbIntensityFloatSorted[0];
+
+        if (maxIntensityFloat == minIntensityFloat) {
+            // All colors have same intensity, which means
+            // the original color is gray, so we can't change saturation.
+            return hex;
+        }
+
+        // New color max intensity wont change. Lets find medium and weak intensities.
+        var newMediumIntensityFloat,
+            newMinIntensityFloat = maxIntensityFloat * (1 - saturationFloat);
+
+        if (mediumIntensityFloat == minIntensityFloat) {
+            // Weak colors have equal intensity.
+            newMediumIntensityFloat = newMinIntensityFloat;
+        }
+        else {
+            // Calculate medium intensity with respect to original intensity proportion.
+            var intensityProportion = (maxIntensityFloat - mediumIntensityFloat) / (mediumIntensityFloat - minIntensityFloat);
+            newMediumIntensityFloat = (intensityProportion * newMinIntensityFloat + maxIntensityFloat) / (intensityProportion + 1);
+        }
+
+        var newRgbIntensityFloat       = [],
+            newRgbIntensityFloatSorted = [newMinIntensityFloat, newMediumIntensityFloat, maxIntensityFloat];
+
+        // We've found new intensities, but we have then sorted from min to max.
+        // Now we have to restore original order.
+        rgbIntensityFloat.forEach(function(originalRgb) {
+            var rgbSortedIndex = rgbIntensityFloatSorted.indexOf(originalRgb);
+            newRgbIntensityFloat.push(newRgbIntensityFloatSorted[rgbSortedIndex]);
+        });
+
+        var floatToHex = function(val) { return ('0' + Math.round(val * 255).toString(16)).substr(-2); },
+            rgb2hex    = function(rgb) { return '#' + floatToHex(rgb[0]) + floatToHex(rgb[1]) + floatToHex(rgb[2]); };
+
+        var newHex = rgb2hex(newRgbIntensityFloat);
+
+        return newHex;
+    }
+
   renderWaveGraph()
   {
       const { width, height, analyser, colors } = this.state;
@@ -219,18 +287,9 @@ export default class Visualizer extends Component {
               ctx.lineTo(x, y);
           }
 
-          const colorPallete = colors[floor(i / bufferLength)];
+          const colorPallete = colors[1];
 
-          //const red = colorPallete[0];
-          //const green = colorPallete[1];
-          //const blue = colorPallete[2];
-
-          const red = 50;
-          const green = 250 * (i / bufferLength) + barHeight;
-          const blue = barHeight + 25 * (i / bufferLength);
-
-          //ctx.strokeStyle = 'rgb(204, 50, 50)';
-          ctx.strokeStyle = `rgb(${red},${green},${blue})`;
+          ctx.strokeStyle = this.applySaturationToHexColor(this.rgbToHex(colorPallete[0], colorPallete[1], colorPallete[2]), 60);
 
           x += sliceWidth;
       }
@@ -286,12 +345,30 @@ export default class Visualizer extends Component {
         ctx.stroke();
     }
 
+    calculateSaturationPercent(barHeight)
+    {
+        if (barHeight <= 20)
+        {
+          return 30
+        }
+
+        if (barHeight <= 80)
+        {
+          return 50
+        }
+
+        if (barHeight <= 100)
+        {
+          return 80
+        }
+
+        return 100;
+    }
+
   renderFrequencyGraph()
   {
       const { width, height, analyser, colors } = this.state;
       const bufferLength = analyser.frequencyBinCount;
-
-      //requestAnimationFrame(this.renderFrame);
 
       const canvas = document.getElementById('frequency-graph');
 
@@ -306,17 +383,11 @@ export default class Visualizer extends Component {
 
       for (let i = 0; i < bufferLength; i = i + 1) {
           const barHeight = data[i];
-          const colorPallete = colors[floor(i / bufferLength)];
 
-          //const red = colorPallete[0];
-          //const green = colorPallete[1];
-          //const blue = colorPallete[2];
+          //const colorPallete = colors[i % 5];
+          const colorPallete = colors[0];
 
-          const red = 50;
-          const green = 250 * (i / bufferLength) + barHeight;
-          const blue = barHeight + 25 * (i / bufferLength);
-
-          ctx.fillStyle = `rgb(${red},${green},${blue})`;
+          ctx.fillStyle = this.applySaturationToHexColor(this.rgbToHex(colorPallete[0], colorPallete[1], colorPallete[2]),  this.calculateSaturationPercent(barHeight));
 
           ctx.fillRect(x, height - barHeight, barWidth, barHeight);
 
