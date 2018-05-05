@@ -129,7 +129,8 @@ export default class App extends Component {
       <SettingsIcon style={{
         position: 'absolute',
         left: '10px',
-        top: '10px'
+        top: '10px',
+        color:'lightGray'
       }}
         onClick={() => this.setState(state => ({ ...state, isSettingDialogOpen: true }))} />
       <Setting
