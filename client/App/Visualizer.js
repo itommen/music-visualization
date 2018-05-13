@@ -4,6 +4,7 @@ import Dialog, { DialogTitle, DialogContent } from 'material-ui/Dialog';
 
 import FrequencyGraphEffect from './Visuals/FrequencyGraphEffect';
 import WaveGraphEffect from './Visuals/WaveGraphEffect';
+import BublesEffect from './Visuals/BublesEffect';
 
 import getPixels from 'get-image-pixels';
 import getColors from 'get-rgba-palette';
@@ -147,6 +148,7 @@ export default class Visualizer extends Component {
       </Dialog>}
       <WaveGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} />
       <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} />
+      <BublesEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} />
       <video className='centered' style={{ ...videoStyle }} id='video-container' autoPlay muted={true} />
     </Flex>;
   }
