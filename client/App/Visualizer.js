@@ -17,8 +17,7 @@ const DEFAULT_FFT_SIZE = 256;
 
 const videoStyle = {
   border: '3px solid darkgray',
-  boxShadow: 'grey 10px 10px 19px',
-  borderRadius: '38px',
+  boxShadow: 'grey 10px 10px 19px'
 }
 
 const subscribed = [];
@@ -100,7 +99,7 @@ export default class Visualizer extends Component {
 
   setDimations() {
     const { videoStream } = this.props;
-    const waveGraphCanvas = document.getElementById('wave-graph');    
+    const waveGraphCanvas = document.getElementById('wave-graph');
     const frequencyGrpahCanvas = document.getElementById('frequency-graph');
     const videoContainer = document.getElementById('video-container');
 
@@ -133,7 +132,7 @@ export default class Visualizer extends Component {
 
   render() {
     const { video, context, width, height, analyser, colors } = this.state;
-    const { setting: { opacity } } = this.props;
+    const { setting: { opacity, borderRadius, waveVisiable, barsVisiable, bublesVisiable } } = this.props;
 
     return <Flex auto align='center' style={{
       position: 'absolute',
@@ -146,10 +145,10 @@ export default class Visualizer extends Component {
           Click anywhere to start your vizualistion!
         </DialogContent>
       </Dialog>}
-      <WaveGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} />
-      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} />
-      <BublesEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} />
-      <video className='centered' style={{ ...videoStyle }} id='video-container' autoPlay muted={true} />
+      <WaveGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={waveVisiable} />
+      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} />
+      <BublesEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={bublesVisiable} />
+      <video className='centered' style={{ ...videoStyle, borderRadius }} id='video-container' autoPlay muted={true} />
     </Flex>;
   }
 }

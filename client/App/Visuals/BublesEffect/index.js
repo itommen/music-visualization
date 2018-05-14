@@ -52,11 +52,13 @@ export default class BublesEffect extends Component {
   }
 
   render() {
-    const { opacity, width, height } = this.props;
+    const { opacity, width, height, borderRadius, visable } = this.props;
     const { bubles } = this.state;
-
-    return <div className='centered' style={{ zIndex: 1 }}>
+    
+    return visable 
+    ?  <div className='centered' style={{ zIndex: 1, borderRadius, }}>
       {bubles.map(({ data, id, color }) => <Buble data={data} width={width} height={height} color={color} key={id} />)}
-    </div>;
+    </div>
+    : null;
   }
 }

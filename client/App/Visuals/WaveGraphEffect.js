@@ -78,8 +78,8 @@ export default class WaveGraphEffect extends Component {
   }
 
   render() {
-    const { opacity } = this.props;
+    const { opacity, borderRadius, visable } = this.props;
 
-    return <VizualEffect opacity={opacity} id={id} />;
+    return <VizualEffect opacity={opacity} borderRadius={borderRadius} id={id} visable={visable} />;
   }
 }

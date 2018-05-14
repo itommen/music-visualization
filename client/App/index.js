@@ -3,10 +3,11 @@ import React, { Component } from 'react';
 import { Flex } from 'reflexbox';
 
 import SettingsIcon from 'material-ui-icons/Settings';
+import Typography from 'material-ui/Typography';
 
 import Visulizer from './Visualizer';
 import SourceSelect from './SourceSelect';
-import Setting from './Setting';
+import Setting from './Setting/';
 import MissingStream from './MissingStream';
 
 import './style.less';
@@ -24,7 +25,12 @@ export default class App extends Component {
       videoSourceId: 'default',
       isSettingDialogOpen: false,
       setting: {
-        opacity: 0.4
+        opacity: 0.4,
+        borderRadius: '0',
+        barsVisiable: true,
+        waveVisiable: true,
+        bublesVisiable: true,
+        background: '#4a4545',
       }
     };
 
@@ -97,6 +103,7 @@ export default class App extends Component {
       })
       .then(this.updateSourceSelection)
       .catch(ex => {
+        console.log(ex);
         debugger;
       });
   }
@@ -121,28 +128,60 @@ export default class App extends Component {
   render() {
     const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen } = this.state;
 
+    const style = {
+      animation: setting.background === 'colorchange' ? 'colorchange 10s infinite' : 'unset',
+      background: setting.background === 'colorchange' ? 'white' : setting.background
+    };
+
     if (!stream || stream.getTracks().length < 2) {
-      return <MissingStream stream={stream} />;
+      return <Flex id='root' column auto
+        style={style}><SettingsIcon style={{
+          position: 'absolute',
+          left: '10px',
+          top: '10px',
+          color: 'lightGray'
+        }}
+          onClick={() => this.setState(state => ({ ...state, isSettingDialogOpen: true }))} />
+        <Setting
+          isOpen={isSettingDialogOpen}
+          onClose={() => this.setState(state => ({ ...state, isSettingDialogOpen: false }))}
+          onUpdate={this.updateSetting}
+          setting={setting}>
+          <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
+            <Typography>
+              Camera
+            </Typography>
+            <SourceSelect sources={videoSources}
+              selectedSource={videoSourceId}
+              sourceChanged={x => this.videoSourceChanged(x)} />
+          </Flex>
+        </Setting></Flex>;
     }
 
-    return <Flex id='root' column auto>
+    return <Flex id='root' column auto
+      style={style}>
       <SettingsIcon style={{
+        zIndex: 1,
         position: 'absolute',
         left: '10px',
         top: '10px',
-        color:'lightGray'
+        color: 'lightGray'
       }}
         onClick={() => this.setState(state => ({ ...state, isSettingDialogOpen: true }))} />
       <Setting
         isOpen={isSettingDialogOpen}
         onClose={() => this.setState(state => ({ ...state, isSettingDialogOpen: false }))}
         onUpdate={this.updateSetting}
-        setting={setting} />
-      <Flex>
-        <SourceSelect sources={videoSources}
-          selectedSource={videoSourceId}
-          sourceChanged={x => this.videoSourceChanged(x)} />
-      </Flex>
+        setting={setting}>
+        <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
+          <Typography>
+            Camera
+      </Typography>
+          <SourceSelect sources={videoSources}
+            selectedSource={videoSourceId}
+            sourceChanged={x => this.videoSourceChanged(x)} />
+        </Flex>
+      </Setting>
       <Flex auto>
         <Visulizer audioStream={stream}
           videoStream={stream}
