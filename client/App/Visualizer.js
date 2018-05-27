@@ -17,7 +17,7 @@ const DEFAULT_FFT_SIZE = 256;
 
 const videoStyle = {
   border: '3px solid darkgray',
-  boxShadow: 'grey 10px 10px 19px'
+  boxShadow: 'black 10px 10px 19px'
 }
 
 const subscribed = [];
@@ -101,6 +101,7 @@ export default class Visualizer extends Component {
     const { videoStream } = this.props;
     const waveGraphCanvas = document.getElementById('wave-graph');
     const frequencyGrpahCanvas = document.getElementById('frequency-graph');
+    const flippedFrequencyGrpahCanvas = document.getElementById('flipped-frequency-graph');
     const videoContainer = document.getElementById('video-container');
 
     const { width, height } = videoStream.getVideoTracks()[0].getSettings();
@@ -109,6 +110,9 @@ export default class Visualizer extends Component {
 
     frequencyGrpahCanvas.width = width;
     frequencyGrpahCanvas.height = height;
+
+      flippedFrequencyGrpahCanvas.width = width;
+      flippedFrequencyGrpahCanvas.height = height;
 
     videoContainer.height = height;
     videoContainer.width = width;
@@ -132,7 +136,7 @@ export default class Visualizer extends Component {
 
   render() {
     const { video, context, width, height, analyser, colors } = this.state;
-    const { setting: { opacity, borderRadius, waveVisiable, barsVisiable, bublesVisiable } } = this.props;
+    const { setting: { opacity, borderRadius, waveVisiable, barsVisiable, bublesVisiable, template } } = this.props;
 
     return <Flex auto align='center' style={{
       position: 'absolute',
@@ -145,10 +149,12 @@ export default class Visualizer extends Component {
           Click anywhere to start your vizualistion!
         </DialogContent>
       </Dialog>}
+      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} id="flipped-frequency-graph" flipped={true}/>
       <WaveGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={waveVisiable} />
-      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} />
+      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} id="frequency-graph"/>
       <BublesEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={bublesVisiable} />
       <video className='centered' style={{ ...videoStyle, borderRadius }} id='video-container' autoPlay muted={true} />
+      <img src={template ? `https://localhost:8081/client/App/Images/${template.image}` : ''} className={template ? template.class : ''}/>
     </Flex>;
   }
 }

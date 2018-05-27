@@ -35,7 +35,7 @@ export default class Setting extends Component {
     const { index } = this.state;
 
     return <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Setting</DialogTitle>
+      <DialogTitle>Settings</DialogTitle>
       <DialogContent style={{
         flex: '1 1 auto',
       }}>

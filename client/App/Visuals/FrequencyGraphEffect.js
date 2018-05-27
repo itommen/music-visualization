@@ -4,8 +4,6 @@ import VizualEffect from './VizualEffect';
 
 import { applySaturationToHexColor, rgbToHex } from './utils';
 
-const id = 'frequency-graph'
-
 export default class FrequencyGraphEffect extends Component {
   constructor() {
     super();
@@ -49,7 +47,7 @@ export default class FrequencyGraphEffect extends Component {
   }
 
   update() {
-    const { width, height, analyser, colors } = this.props;
+    const { width, height, analyser, colors, id } = this.props;
     const bufferLength = analyser.frequencyBinCount;
 
     const canvas = document.getElementById(id);
@@ -77,8 +75,8 @@ export default class FrequencyGraphEffect extends Component {
   }
 
   render() {
-    const { opacity, borderRadius, visable } = this.props;
+    const { opacity, borderRadius, visable, id, flipped } = this.props;
 
-    return <VizualEffect opacity={opacity} borderRadius={borderRadius} id={id} visable={visable} />;
+    return <VizualEffect opacity={opacity} borderRadius={borderRadius} id={id} visable={visable} flipped={flipped}/>;
   }
 }

@@ -9,6 +9,7 @@ import Visulizer from './Visualizer';
 import SourceSelect from './SourceSelect';
 import Setting from './Setting/';
 import MissingStream from './MissingStream';
+import layoutOptions from './layoutOptions';
 
 import './style.less';
 
@@ -30,7 +31,9 @@ export default class App extends Component {
         barsVisiable: true,
         waveVisiable: true,
         bublesVisiable: true,
-        background: '#4a4545',
+        background: layoutOptions.backgroundColors[0],
+        template: null,
+        image:null,
       }
     };
 
@@ -129,8 +132,8 @@ export default class App extends Component {
     const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen } = this.state;
 
     const style = {
-      animation: setting.background === 'colorchange' ? 'colorchange 10s infinite' : 'unset',
-      background: setting.background === 'colorchange' ? 'white' : setting.background
+      animation: layoutOptions.backgroundThemes.includes(setting.background) ? `${setting.background} 10s infinite` : 'unset',
+      background: setting.background
     };
 
     if (!stream || stream.getTracks().length < 2) {

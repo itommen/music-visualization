@@ -47,7 +47,7 @@ export default class WaveGraphEffect extends Component {
     ctx.fillStyle = 'rgb(200, 200, 200)';
     ctx.clearRect(0, 0, width, height);
 
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 5;
 
     ctx.beginPath();
 
