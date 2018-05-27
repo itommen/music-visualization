@@ -28,7 +28,7 @@ const setTemplate = (onUpdate, template) => {
 
 const setBackgroundImage = (onUpdate, image) => {
     onUpdate('template', null);
-    onUpdate('background', `url(https://localhost:8081/client/App/Images/${image})`);
+    onUpdate('background', `url(client/App/Images/${image})`);
 }
 
 export default ({ setting, onUpdate }) => <Fragment>
@@ -61,14 +61,14 @@ export default ({ setting, onUpdate }) => <Fragment>
     <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
         <Typography>Template</Typography>
         {
-            templates.templatesList.map(x => <img key={x} src={`https://localhost:8081/client/App/Images/${x.image}`} style={{ ...frameBaseStyle(setting.template, x)}} onClick={() => setTemplate(onUpdate, x)}></img>)
+            templates.templatesList.map(x => <img key={x} src={`client/App/Images/${x.image}`} style={{ ...frameBaseStyle(setting.template, x)}} onClick={() => setTemplate(onUpdate, x)}></img>)
         }
         <div style={{ ...frameBaseStyle(setting.template, null), template: null}} onClick={() => onUpdate('template', null)}></div>
     </Flex>
     <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
         <Typography>Background Images</Typography>
         {
-            templates.backgroundImages.map(x => <img key={x} src={`https://localhost:8081/client/App/Images/${x}`} style={{ ...frameBaseStyle(setting.image, x)}} onClick={() => setBackgroundImage(onUpdate, x)}></img>)
+            templates.backgroundImages.map(x => <img key={x} src={`client/App/Images/${x}`} style={{ ...frameBaseStyle(setting.image, x)}} onClick={() => setBackgroundImage(onUpdate, x)}></img>)
         }
     </Flex>
 </Fragment>;

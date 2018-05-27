@@ -154,7 +154,7 @@ export default class Visualizer extends Component {
       <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} id="frequency-graph"/>
       <BublesEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={bublesVisiable} />
       <video className='centered' style={{ ...videoStyle, borderRadius }} id='video-container' autoPlay muted={true} />
-      <img src={template ? `https://localhost:8081/client/App/Images/${template.image}` : ''} className={template ? template.class : ''}/>
+      <img src={template ? `client/App/Images/${template.image}` : ''} className={template ? template.class : ''}/>
     </Flex>;
   }
 }
