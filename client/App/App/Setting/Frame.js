@@ -9,8 +9,9 @@ import templates from '../templates';
 const frameBaseStyle = (selected, value) => ({
     width: '30px',
     height: '30px',
-    border: '2px solid',
-    borderColor: selected === value ? 'green' : 'black'
+    border: '1px solid',
+    borderColor: selected === value ? 'green' : 'gray',
+    borderRadius:'35%'
 });
 
 const frameTypeStyle = (selected, value) => {
@@ -33,7 +34,7 @@ const setBackgroundImage = (onUpdate, image) => {
 
 export default ({ setting, onUpdate }) => <Fragment>
     <Flex auto style={{ padding: '30px 0' }}>
-        <span>Opacity</span>
+        <Typography className='setting-option-title'>Opacity</Typography>
         <InputRange
             maxValue={100}
             minValue={0}
@@ -41,34 +42,34 @@ export default ({ setting, onUpdate }) => <Fragment>
             onChange={x => onUpdate('opacity', x / 100)} />
     </Flex>
     <Flex auto justify='space-between'>
-        <Typography>Frame Type</Typography>
+        <Typography className='setting-option-title'>Frame Type</Typography>
         {
             layoutOptions.frameTypes.map(x => <div key={x} style={{ ...frameTypeStyle(setting.borderRadius, x), borderRadius: x }} onClick={() => onUpdate('borderRadius', x)}></div>)
         }
     </Flex>
     <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
-        <Typography>Background Color</Typography>
-        {
-            layoutOptions.backgroundColors.map(x => <div key={x} style={{ ...frameBaseStyle(setting.background, x), background: x }} onClick={() => onUpdate('background', x)}></div>)
-        }
-    </Flex>
-    <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
-        <Typography>Background Theme</Typography>
-        {
-            layoutOptions.backgroundThemes.map(x => <div key={x} style={{ ...frameBaseStyle(setting.background, x), animation: `${x} 10s infinite` }} onClick={() => onUpdate('background', x)}></div>)
-        }
-    </Flex>
-    <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
-        <Typography>Template</Typography>
+        <Typography className='setting-option-title'>Template</Typography>
         {
             templates.templatesList.map(x => <img key={x} src={`client/App/App/Images/${x.image}`} style={{ ...frameBaseStyle(setting.template, x) }} onClick={() => setTemplate(onUpdate, x)}></img>)
         }
         <div style={{ ...frameBaseStyle(setting.template, null), template: null }} onClick={() => onUpdate('template', null)}></div>
     </Flex>
     <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
-        <Typography>Background Images</Typography>
+        <Typography className='setting-option-title'>Background Images</Typography>
         {
             templates.backgroundImages.map(x => <img key={x} src={`client/App/App/Images/${x}`} style={{ ...frameBaseStyle(setting.image, x) }} onClick={() => setBackgroundImage(onUpdate, x)}></img>)
+        }
+    </Flex>
+    <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
+        <Typography className='setting-option-title'>Background Theme</Typography>
+        {
+            layoutOptions.backgroundThemes.map(x => <div key={x} style={{ ...frameBaseStyle(setting.background, x), animation: `${x} 10s infinite`}} onClick={() => onUpdate('background', x)}></div>)
+        }
+    </Flex>
+    <Flex auto justify='space-between' style={{ paddingTop: '30px' }}>
+        <Typography className='setting-option-title'>Background Color</Typography>
+        {
+            layoutOptions.backgroundColors.map(x => <div key={x} style={{ ...frameBaseStyle(setting.background, x), background: x }} onClick={() => onUpdate('background', x)}></div>)
         }
     </Flex>
 </Fragment>;
