@@ -66,10 +66,10 @@ export default class MainApp extends Component {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => this.handleClose(false)} color='primary'>
-            Disagree
+            No, return to Home Page
             </Button>
           <Button onClick={() => this.handleClose(true)} color='primary' autoFocus>
-            Agree
+            Yes, load my settings!
             </Button>
         </DialogActions>
       </Dialog>;

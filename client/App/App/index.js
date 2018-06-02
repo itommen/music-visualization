@@ -219,7 +219,7 @@ export default class App extends Component {
         ContentProps={{
           'aria-describedby': 'message-id'
         }}
-        message={<span id="message-id">Setting Saved!</span>}
+        message={<span id="message-id">Your settings were saved!</span>}
       />
       <Setting
         isOpen={isSettingDialogOpen}
