@@ -111,8 +111,8 @@ export default class Visualizer extends Component {
     frequencyGrpahCanvas.width = width;
     frequencyGrpahCanvas.height = height;
 
-      flippedFrequencyGrpahCanvas.width = width;
-      flippedFrequencyGrpahCanvas.height = height;
+    flippedFrequencyGrpahCanvas.width = width;
+    flippedFrequencyGrpahCanvas.height = height;
 
     videoContainer.height = height;
     videoContainer.width = width;
@@ -136,7 +136,7 @@ export default class Visualizer extends Component {
 
   render() {
     const { video, context, width, height, analyser, colors } = this.state;
-    const { setting: { opacity, borderRadius, waveVisiable, barsVisiable, bublesVisiable, template } } = this.props;
+    const { setting: { opacity, borderRadius, waveVisiable, barsVisiable, bublesVisiable, template }, background } = this.props;
 
     return <Flex auto align='center' style={{
       position: 'absolute',
@@ -151,8 +151,8 @@ export default class Visualizer extends Component {
       </Dialog>}
       <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} id="flipped-frequency-graph" flipped={true}/>
       <WaveGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={waveVisiable} />
-      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} id="frequency-graph"/>
-      <BublesEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={bublesVisiable} />
+      <FrequencyGraphEffect subscribe={subscribe} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={barsVisiable} id="frequency-graph" />
+      <BublesEffect subscribe={subscribe} background={background} width={width} height={height} analyser={analyser} colors={colors} borderRadius={borderRadius} visable={bublesVisiable} />
       <video className='centered' style={{ ...videoStyle, borderRadius }} id='video-container' autoPlay muted={true} />
       <img src={template ? `client/App/Images/${template.image}` : ''} className={template ? template.class : ''}/>
     </Flex>;

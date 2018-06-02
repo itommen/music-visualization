@@ -46,19 +46,19 @@ export default class BublesEffect extends Component {
         data: this.getFrequencyAudioData(),
         id: index++,
         expired: new Date(Date.now() + 4 * 1000),
-        color: rgbToHex(...colors[3])
+        color: rgbToHex(...colors[1])
       }]
     }))
   }
 
   render() {
-    const { opacity, width, height, borderRadius, visable } = this.props;
+    const { opacity, width, height, borderRadius, visable, background } = this.props;
     const { bubles } = this.state;
-    
-    return visable 
-    ?  <div className='centered' style={{ zIndex: 1, borderRadius, }}>
-      {bubles.map(({ data, id, color }) => <Buble data={data} width={width} height={height} color={color} key={id} />)}
-    </div>
-    : null;
+
+    return visable
+      ? <div className='centered' style={{ zIndex: 1, borderRadius, }}>
+        {bubles.map(({ data, id, color }) => <Buble data={data} background={background} width={width} height={height} color={color} key={id} />)}
+      </div>
+      : null;
   }
 }

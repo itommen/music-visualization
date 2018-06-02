@@ -189,7 +189,8 @@ export default class App extends Component {
         <Visulizer audioStream={stream}
           videoStream={stream}
           videoSource={videoSourceId}
-          setting={setting} />
+          setting={setting}
+          background={style} />
       </Flex>
     </Flex>;
   }

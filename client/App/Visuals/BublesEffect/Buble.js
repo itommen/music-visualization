@@ -32,10 +32,10 @@ export default class Buble extends Component {
     const chunks = splitArray(removePaddingZeros(data), 4);
 
     const features = {
-      size: getStrength(chunks[0], 10, 50),
-      time: getStrength(chunks[1], 0.1, 3),
-      x: getStrength(chunks[2], -(width / 2), width / 2),
-      y: getStrength(chunks[3], -(height / 2), height / 2),
+      size: getStrength(chunks[2], 20, 60),
+      time: getStrength(chunks[3], 0.5, 10),
+      x: getStrength(chunks[0], -(width / 2), width / 2),
+      y: getStrength(chunks[1], -(height / 2), height / 2),
       color
     }
 
@@ -46,9 +46,15 @@ export default class Buble extends Component {
 
   render() {
     const { features: { size, time, x, y, color } } = this.state;
+    const { background: { animation, background } } = this.props;
+
+    const finalAnimation = animation === 'unset'
+      ? `buble ${time}s`
+      : `buble ${time}s, ${animation}`;
 
     return <div
       style={{
+        background,
         zIndex: 1,
         backgroundColor: color,
         position: 'absolute',
@@ -58,7 +64,7 @@ export default class Buble extends Component {
         width: size,
         height: size,
         opacity: 0,
-        animation: `buble ${time}s`
+        animation: finalAnimation
       }}></div>;
   }
 }
