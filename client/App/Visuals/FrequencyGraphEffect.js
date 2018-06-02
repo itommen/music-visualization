@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import VizualEffect from './VizualEffect';
-
 import { applySaturationToHexColor, rgbToHex } from './utils';
 
 export default class FrequencyGraphEffect extends Component {
@@ -76,7 +74,7 @@ export default class FrequencyGraphEffect extends Component {
     ctx.clearRect(0, 0, width, height);
 
     for (let i = 0; i < bufferLength; i = i + 1) {
-      const barHeight = data[i] / 1.5;
+      const barHeight = data[i] / 1.2;
 
       const colorPallete = colors[0];
 
@@ -91,6 +89,10 @@ export default class FrequencyGraphEffect extends Component {
   render() {
     const { opacity, borderRadius, visable, id, flipped } = this.props;
 
-    return <VizualEffect opacity={opacity} borderRadius={borderRadius} id={id} visable={visable} flipped={flipped}/>;
+    return <canvas  className='centered' style={{
+            opacity: visable ? opacity : 0,
+            borderRadius,
+            zIndex: 1,
+            transform: flipped ? 'scale(-1) translate(50%, 0)' : 'translate(-50%, 0'}} id={id} />
   }
 }

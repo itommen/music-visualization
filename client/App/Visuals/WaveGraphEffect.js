@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import VizualEffect from './VizualEffect';
-
 import { applySaturationToHexColor, rgbToHex } from './utils';
 
 const id = 'wave-graph'
@@ -47,7 +45,7 @@ export default class WaveGraphEffect extends Component {
     ctx.fillStyle = 'rgb(200, 200, 200)';
     ctx.clearRect(0, 0, width, height);
 
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 12;
 
     ctx.beginPath();
 
@@ -78,8 +76,8 @@ export default class WaveGraphEffect extends Component {
   }
 
   render() {
-    const { opacity, borderRadius, visable } = this.props;
+    const { opacity, borderRadius, visable, background } = this.props;
 
-    return <VizualEffect opacity={opacity} borderRadius={borderRadius} id={id} visable={visable} />;
+    return <canvas style={{ opacity: visable ? opacity : 0, zIndex: 1, width:'100%', height:'10%', bottom:0, position:'absolute', backgroundColor:'rgba(185, 173, 160, 0.08)'}} id={id}/>
   }
 }
