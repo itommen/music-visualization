@@ -35,15 +35,29 @@ export default class FrequencyGraphEffect extends Component {
       return 30
     }
 
+    if (barHeight <= 50) {
+      return 35
+    }
+
     if (barHeight <= 80) {
-      return 50
+      return 40
     }
 
     if (barHeight <= 100) {
-      return 80
+      return 45
     }
 
-    return 100;
+    if (barHeight <= 130)
+    {
+      return 55;
+    }
+
+    if (barHeight <= 155)
+    {
+      return 65;
+    }
+
+    return 75;
   }
 
   update() {
@@ -62,7 +76,7 @@ export default class FrequencyGraphEffect extends Component {
     ctx.clearRect(0, 0, width, height);
 
     for (let i = 0; i < bufferLength; i = i + 1) {
-      const barHeight = data[i];
+      const barHeight = data[i] / 1.5;
 
       const colorPallete = colors[0];
 
