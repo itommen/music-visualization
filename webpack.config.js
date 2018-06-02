@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist/client'),
     filename: '[name].[hash].js',
-    publicPath: 'https://10.10.192.76:8081/'
+    publicPath: 'https://10.100.102.11:8081/'
   },
   module: {
     rules: [
