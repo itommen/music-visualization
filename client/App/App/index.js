@@ -4,6 +4,7 @@ import { Flex } from 'reflexbox';
 
 import SettingsIcon from 'material-ui-icons/Settings';
 import SaveIcon from 'material-ui-icons/Save';
+import RefreshIcon from 'material-ui-icons/Refresh';
 
 import Typography from 'material-ui/Typography';
 
@@ -162,6 +163,7 @@ export default class App extends Component {
 
   render() {
     const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen, settingSaved } = this.state;
+    const { reset } = this.props;
 
     const style = {
       animation: layoutOptions.backgroundThemes.includes(setting.background) ? `${setting.background} 10s infinite` : 'unset',
@@ -211,6 +213,11 @@ export default class App extends Component {
           padding: '5px'
         }}
           onClick={this.saveSetting} />
+        <RefreshIcon style={{
+          color: 'lightGray',
+          padding: '5px'
+        }}
+          onClick={reset} />
       </div>
       <Snackbar
         open={settingSaved}

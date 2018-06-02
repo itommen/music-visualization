@@ -77,7 +77,7 @@ export default class MainApp extends Component {
 
     return <Flex column auto id='root'>
       {isReady
-        ? <App setting={setting} />
+        ? <App setting={setting} reset={() => this.setState(x => ({ ...x, isReady: false, dismissSaved: true }))} />
         : <HomePage onFinish={this.finish} />}
     </Flex>;
   }
