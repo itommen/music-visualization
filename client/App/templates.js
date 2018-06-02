@@ -9,15 +9,15 @@ const flowersTemplate = {
 
 const jimiHendrixTemplate = {
     image: 'jimiHendrix.png',
-    borderRadius: layoutOptions.frameTypes[2],
-    background: layoutOptions.backgroundThemes[0],
+    borderRadius: layoutOptions.frameTypes[1],
+    background: layoutOptions.backgroundColors[1],
     class: 'jimiHendrixTemplate'
 }
 
 const jazzTemplate = {
     image: 'jazz.png',
-    borderRadius: layoutOptions.frameTypes[3],
-    background: layoutOptions.backgroundThemes[2],
+    borderRadius: layoutOptions.frameTypes[2],
+    background: layoutOptions.backgroundThemes[0],
     class: 'jazzTemplate'
 }
 

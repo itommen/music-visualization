@@ -5,6 +5,8 @@ html, body, #root, #app {
 
   #root {
     display: flex;
+    overflow:hidden;
+    background-size: cover !important;
   }
 
   .centered {
@@ -56,11 +58,4 @@ html, body, #root, #app {
   right: -160px;  // TODO: change
   position: absolute;
   z-index: 2;
-}
-// TODO: Change & adjust the background image to fit the entire screen
-html{
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
 }
