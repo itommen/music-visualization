@@ -55,8 +55,7 @@ export default class Buble extends Component {
     return <div
       style={{
         background,
-        zIndex: 1,
-        backgroundColor: color,
+        zIndex: 1,        
         position: 'absolute',
         top: y,
         left: x,
