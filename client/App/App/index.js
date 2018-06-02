@@ -3,7 +3,13 @@ import React, { Component } from 'react';
 import { Flex } from 'reflexbox';
 
 import SettingsIcon from 'material-ui-icons/Settings';
+import SaveIcon from 'material-ui-icons/Save';
+
 import Typography from 'material-ui/Typography';
+
+import Snackbar from 'material-ui/Snackbar';
+
+import * as Cookies from 'js-cookie';
 
 import Visulizer from './Visualizer';
 import SourceSelect from './SourceSelect';
@@ -31,6 +37,8 @@ export default class App extends Component {
     this.loadStream = this.loadStream.bind(this);
     this.sourceChanged = this.videoSourceChanged.bind(this);
     this.updateSourceSelection = this.updateSourceSelection.bind(this);
+    this.saveSetting = this.saveSetting.bind(this);
+    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
   }
 
   componentWillMount() {
@@ -137,8 +145,23 @@ export default class App extends Component {
     }));
   }
 
+  handleCloseSnackbar() {
+    this.setState({
+      settingSaved: false
+    });
+
+  }
+  saveSetting() {
+    const { setting } = this.state;
+
+    Cookies.set('setting', JSON.stringify(setting));
+    this.setState({
+      settingSaved: true
+    });
+  }
+
   render() {
-    const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen } = this.state;
+    const { stream, videoSources, videoSourceId, setting, isSettingDialogOpen, settingSaved } = this.state;
 
     const style = {
       animation: layoutOptions.backgroundThemes.includes(setting.background) ? `${setting.background} 10s infinite` : 'unset',
@@ -172,14 +195,32 @@ export default class App extends Component {
 
     return <Flex id='root' column auto
       style={style}>
-      <SettingsIcon style={{
+      <div style={{
         zIndex: 1,
         position: 'absolute',
         left: '10px',
-        top: '10px',
-        color: 'lightGray'
-      }}
-        onClick={() => this.setState(state => ({ ...state, isSettingDialogOpen: true }))} />
+        top: '10px'
+      }}>
+        <SettingsIcon style={{
+          color: 'lightGray',
+          padding: '5px'
+        }}
+          onClick={() => this.setState(state => ({ ...state, isSettingDialogOpen: true }))} />
+        <SaveIcon style={{
+          color: 'lightGray',
+          padding: '5px'
+        }}
+          onClick={this.saveSetting} />
+      </div>
+      <Snackbar
+        open={settingSaved}
+        onClose={this.handleCloseSnackbar}
+        autoHideDuration={3000}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={<span id="message-id">Setting Saved!</span>}
+      />
       <Setting
         isOpen={isSettingDialogOpen}
         onClose={() => this.setState(state => ({ ...state, isSettingDialogOpen: false }))}
